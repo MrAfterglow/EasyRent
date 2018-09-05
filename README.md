@@ -20,11 +20,11 @@ This Is a new great project, use Flask and ajax.
 ##### SQL：
 
 	使用MySQL存储数据
-
+	
 	使用Redis存储cookie与session
 
 ......	
 
 ### 9.4提交到github中：
 
-	目前已经实现了登录，注册，修改昵称，修改头像，添加房源的功能，
+	目前已经实现了登录，注册，修改昵称，修改头像，身份验证，添加房源的功能，

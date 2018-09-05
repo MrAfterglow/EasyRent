@@ -25,4 +25,12 @@ $(document).ready(function(){
         var orderId = $(this).parents("li").attr("order-id");
         $(".modal-reject").attr("order-id", orderId);
     });
+
+    $.get('/order/lorder_info/',function (data) {
+        console.log(data.lorder_info)
+        if (data.code==200){
+            var lorder_html = template('lorder_temp_script',{lorders:data.lorder_info})
+        }
+        $('#orders-list').html(lorder_html)
+    })
 });

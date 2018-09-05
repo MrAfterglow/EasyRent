@@ -76,11 +76,12 @@ def my_new_house():
         house.facilities.append(facility)
     # commit 在数据库中创建house和设施的中间表数据
     house.add_update()
+    del session['house_id']
     session['house_id']=house.id
     return jsonify(code=status_code.OK )
 
 
-@house_blueprint.route('add_img/', methods=['PATCH'])
+@house_blueprint.route('add_img/', methods=['POST'])
 def add_img():
     house_id=session['house_id']
     img=request.files.get('house_image')
@@ -93,8 +94,31 @@ def add_img():
         houseimg.house_id=house_id
         houseimg.url=house_img_path
         houseimg.add_update()
-        del session['house_id']
+        #首图：
+        house = House.query.get(house_id)
+        if not house.index_image_url:
+            house.index_image_url = house_img_path
+            house.add_update()
 
+
+        # del session['house_id']
         return jsonify(code=status_code.OK,img_path=house_img_path)
     else:
         return jsonify({'code':1015,'msg':'请求失败'})
+
+
+@house_blueprint.route('detail/',methods=['GET'])
+def detail():
+    return render_template('detail.html')
+
+
+@house_blueprint.route('detail/<int:id>/',methods=['GET'])
+@is_login
+def house_detail(id):
+    house = House.query.get(id)
+    return jsonify(code=200,detail=house.to_full_dict())
+
+@house_blueprint.route('booking/')
+def booking():
+    return render_template('booking.html')
+

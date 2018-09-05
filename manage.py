@@ -5,6 +5,7 @@ from flask_session import Session
 
 from app.house_view import house_blueprint
 from app.models import db
+from app.order_views import order_blueprint
 from app.user_views import user_blueprint
 
 app=Flask(__name__)
@@ -15,6 +16,7 @@ db.init_app(app)
 # 注册blueprint
 app.register_blueprint(blueprint=user_blueprint,url_prefix='/user')
 app.register_blueprint(blueprint=house_blueprint,url_prefix='/house')
+app.register_blueprint(blueprint=order_blueprint,url_prefix='/order')
 # redis配置
 app.config['SESSION_TYPE']='redis'
 app.config['SESSION_REDSI']=redis.Redis(host='127.0.0.1',port=6379)

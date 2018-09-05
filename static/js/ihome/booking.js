@@ -46,4 +46,28 @@ $(document).ready(function(){
             $(".order-amount>span").html(amount.toFixed(2) + "(共"+ days +"晚)");
         }
     });
+    var house_id=location.search.split('=')[1]
+    $.get('/house/detail/'+house_id,function (data) {
+        var booking_temp = template('booking_temp_script',{ohouse:data.detail})
+        $('.house-info').html(booking_temp)
+    })
+
+
+
+    $('.submit-btn').click(function () {
+        var start_date = $('#start-date').val()
+        var end_date = $('#end-date').val()
+        $.ajax({
+        url:'/order/order/',
+        data:{'begin_date':start_date,'end_date':end_date,'house_id':house_id},
+        dataType:'json',
+        type:'POST',
+        success:function (data) {
+            console.log(data)
+            if (data.code==200){
+                location.href='/order/order/'
+            }
+        }
+    })
+    })
 })

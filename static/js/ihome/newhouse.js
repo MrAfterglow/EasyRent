@@ -40,13 +40,12 @@ $(document).ready(function(){
         e.preventDefault()
         $(this).ajaxSubmit({
             url: '/house/add_img/',
-            type: 'PATCH',
+            type: 'POST',
             dataType: 'json',
             success:function (data) {
                 console.log(data)
                 if (data.code==200){
                     $('#img').attr('src','/static/media/'+data.img_path)
-                    $('#post_img').hide()
                 }
             }
         })

@@ -10,9 +10,9 @@ db = SQLAlchemy()
 
 class BaseModel(object):
     # 定义基础的模型
-    create_time = db.Column(db.DATETIME, default=datetime.now())
-    update_time = db.Column(db.DATETIME, default=datetime.now(),
-                            onupdate=datetime.now())
+    create_time = db.Column(db.DATETIME, default=datetime.now)
+    update_time = db.Column(db.DATETIME, default=datetime.now,
+                            onupdate=datetime.now)
 
     def add_update(self):
         db.session.add(self)
@@ -117,8 +117,8 @@ class House(BaseModel, db.Model):
 
     def to_full_dict(self):
         return {
-            'id':self.id,
-            'user_avatar':self.user.avatar if self.user.avatar else '',
+            'id': self.id,
+            'user_avatar': self.user.avatar if self.user.avatar else '',
             'user_name':self.user.name,
             'title': self.title,
             'price':self.price,
@@ -127,6 +127,7 @@ class House(BaseModel, db.Model):
             'acreage':self.acreage,
             'unit':self.unit,
             'capacity':self.capacity,
+            'index_image_url':self.index_image_url,
             'beds':self.beds,
             'deposit':self.deposit,
             'min_days':self.min_days,
