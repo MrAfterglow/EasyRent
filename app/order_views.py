@@ -4,7 +4,7 @@ import re
 from flask import Blueprint, request, render_template, jsonify, session
 import os
 #导入模型
-from app.models import db, User, House
+from app.models import db, User, House, Area
 from utils import status_code
 #初始化蓝图
 from utils.settings import UPLOAD_DIR
@@ -71,4 +71,39 @@ def lorder_info():
     orders = Order.query.filter(Order.house_id.in_(house_ids))
     lorder_info = [order.to_dict() for order in orders]
     return jsonify(code = 200 ,lorder_info=lorder_info)
+
+
+@order_blueprint.route('o_status/',methods=['PATCH'])
+def order_status():
+    # 接收订单的id
+    order_id=request.form.get('order_id')
+    status = request.form.get('status')
+    comment = request.form.get('commit')
+    # 获取订单对象
+    order = Order.query.get(order_id)
+    order.status = status
+    if comment:
+        order.comment = comment
+    order.add_update()
+    return jsonify(status_code.SUCCESS)
+
+
+@order_blueprint.route('hindex/')
+def my_index():
+    username = ''
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        username = user.name
+    #获取房屋的轮播图
+    houses = House.query.filter(House.index_image_url != '').order_by('-id')[:3]
+    house_info = [house.to_dict() for house in houses]
+
+    return jsonify(code = 200 ,username = username ,house_info = house_info)
+
+
+
+@order_blueprint.route('search/')
+def search():
+    return render_template('search.html')
+
 

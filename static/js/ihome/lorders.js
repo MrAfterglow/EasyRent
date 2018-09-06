@@ -17,20 +17,60 @@ function getCookie(name) {
 $(document).ready(function(){
     $('.modal').on('show.bs.modal', centerModals);      //当模态框出现的时候
     $(window).on('resize', centerModals);
-    $(".order-accept").on("click", function(){
-        var orderId = $(this).parents("li").attr("order-id");
-        $(".modal-accept").attr("order-id", orderId);
-    });
-    $(".order-reject").on("click", function(){
-        var orderId = $(this).parents("li").attr("order-id");
-        $(".modal-reject").attr("order-id", orderId);
-    });
+
 
     $.get('/order/lorder_info/',function (data) {
         console.log(data.lorder_info)
         if (data.code==200){
             var lorder_html = template('lorder_temp_script',{lorders:data.lorder_info})
+
         }
         $('#orders-list').html(lorder_html)
+
+        $(".order-accept").on("click", function(){
+        var orderId = $(this).parents("li").attr("order-id");
+        $(".modal-accept").attr("order-id", orderId);
+    });
+        $(".order-reject").on("click", function(){
+        var orderId = $(this).parents("li").attr("order-id");
+        $(".modal-reject").attr("order-id", orderId);
+    });
     })
+
+
+
+    $(".modal-accept").on("click", function(){
+        var order_id = $('.modal-accept').attr('order-id')
+        var status = 'WAIT_PAYMENT'
+        console.log(order_id)
+        $.ajax({
+            url:'/order/o_status/',
+            type:'PATCH',
+            dataType:'json',
+            data: {'order_id':order_id,'status':status},
+            success:function (data) {
+                if (data.code==200){
+                    location.reload()
+                }
+            }
+        })
+
+    });
+    $(".modal-reject").on("click", function(){
+        var order_id = $('.modal-reject').attr('order-id')
+        var status = 'REJECTED'
+        var comment = $('#reject-reason').val()
+
+        $.ajax({
+            url: '/order/o_status/',
+            type: 'PATCH',
+            dataType: 'json',
+            data: {'order_id':order_id,'status':status,'comment':comment},
+            success: function (data) {
+                location.reload()
+            }
+        })
+    });
+
+
 });

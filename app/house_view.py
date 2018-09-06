@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
 # from flask.json import jsonify
 
-from app.models import User, House, Area, Facility, HouseImage
+from app.models import User, House, Area, Facility, HouseImage, Order
 from utils import status_code
 from utils.functions import is_login
 from utils.settings import HOUSE_DIR
@@ -76,7 +76,7 @@ def my_new_house():
         house.facilities.append(facility)
     # commit 在数据库中创建house和设施的中间表数据
     house.add_update()
-    del session['house_id']
+    # del session['house_id']
     session['house_id']=house.id
     return jsonify(code=status_code.OK )
 
@@ -122,3 +122,32 @@ def house_detail(id):
 def booking():
     return render_template('booking.html')
 
+
+@house_blueprint.route('index/')
+def index():
+    return render_template('index.html')
+
+@house_blueprint.route('my_search/')
+def my_search():
+    #先获取 区域id ，订单开始时间，结束时间
+    aid=request.args.get('aid')
+    sd=request.args.get('sd')
+    ed=request.args.get('ed')
+    # 在首页，房东不能查自己房屋
+
+    houses = House.query.filter(House.area_id == aid)
+    # 订单四种情况，查询出的房屋都不能展示
+    order1=Order.query.filter(Order.end_date <=ed , Order.begin_date <=ed)
+    order2 = Order.query.filter(Order.begin_date <= sd , Order.end_date >= sd )
+    order3 = Order.query.filter(Order.begin_date <= sd ,Order.end_date <=ed)
+
+    house1 = [order.house_id for order in order1]
+    house2 = [order.house_id for order in order2]
+    house3 = [order.house_id for order in order3]
+    # 去重复
+    not_show_house_id = list(set(house1+house2+house3))
+    #最终展示的房屋信息
+    houses = houses.filter(House.id.notin_(not_show_house_id))
+
+    house_info = [house.to_dict() for house in houses]
+    return jsonify(code = 200 , house_info =house_info)

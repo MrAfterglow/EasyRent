@@ -27,12 +27,14 @@
                 <script type="text/html" id="lorder_temp_script">
                 {{if lorders}}
                 {{each lorders as lorder}}
-                <li >
+                <li order-id={{lorder.order_id}} >
                     <div class="order-title">
                         <h3>订单编号：{{lorder.order_id}}</h3>
                         <div class="fr order-operate">
+                            {{ if lorder.status == 'WAIT_ACCEPT'}}
                             <button type="button" class="btn btn-success order-accept" data-toggle="modal" data-target="#accept-modal">接单</button>
                             <button type="button" class="btn btn-danger order-reject" data-toggle="modal" data-target="#reject-modal">拒单</button>
+                            {{ /if}}
                         </div>
                     </div>
                     <div class="order-content">
